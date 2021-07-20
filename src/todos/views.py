@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.forms import modelformset_factory
 from todos.models import Todo, Collection
+from rest_framework import viewsets
+from rest_framework import permissions
+from todos.serializers import CollectionSerializer, TodoSerializer
 
 
 def collection(request, id):
@@ -72,3 +75,30 @@ def index(request):
         formset = CollectionFormSet(queryset=queryset)
 
     return render(request, 'index.html', {"formset": formset})
+
+
+class CollectionViewset(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class TodoViewset(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(collection__owner=self.request.user)
