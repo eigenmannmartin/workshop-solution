@@ -1,8 +1,7 @@
-
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>My Todos!<h1>
+  <h1>{{ collection.name }}<h1>
 
   <form method="post">
       {% csrf_token %}
@@ -14,15 +13,19 @@
 
           {% if not form.instance.pk %}
             <h2>
-              New List
+              New Item
             </h2>
           {% endif %}
           <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">List Name</label>
-            {{ form.name }}
-            <div id="emailHelp" class="form-text">Give your todo list a nice name</div>
+            <label class="form-label">Item Description</label>
+            {{ form.description }}
           </div>
+          
           {% if form.instance.pk %}
+            <div class="mb-3">
+              <label class="form-label">Done</label>
+              {{ form.done }}
+            </div>
             <p class="text-muted">
             Created: <span>{{ form.instance.created }}</span> <br />
             Updated: <span>{{ form.instance.modified }}</span>
@@ -30,9 +33,6 @@
           {% endif %}
           {% if formset.can_delete and form.instance.pk %}
               <li>Delete: {{ form.DELETE }}</li>
-          {% endif %}
-          {% if form.instance.pk %}
-            <a href="{% url "collection" form.instance.pk %}">Details</a> 
           {% endif %}
       </div>
       {% endfor %}
