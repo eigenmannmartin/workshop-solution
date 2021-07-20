@@ -1,0 +1,3 @@
+language = "python3"
+run = "python src/manage.py runserver 0.0.0.0:3000"
+onBoot="python src/manage.py migrate"
